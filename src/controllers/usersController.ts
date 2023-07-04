@@ -46,18 +46,33 @@ const userController = {
             const user = req.body.user
             const userFind = await User.findOne({ user: user })
 
+            const correctPassword = userFind !== null ? userFind.password : ''
+
             if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' })
 
-            
+            const result = await bcrypt.compare(req.body.password, correctPassword)
 
+            if (!result) return res.status(401).json({ msg: 'Credenciais inválidas' })
 
-
+            res.status(200).json({ msg: 'Autenticação bem-sucedida' })
 
         } catch (err: any) {
             console.log(err)
             res.status(500).json({ msg: 'Erro ao logar' })
         }
 
+    },
+
+    update: async (req: UserRequest, res: Response) => {
+        try {
+
+            User.updateOne()
+
+
+        } catch (err: any) {
+            console.log(err)
+            res.status(500).json({ msg: 'Erro ao atualizar' })
+        }
     }
 }
 
