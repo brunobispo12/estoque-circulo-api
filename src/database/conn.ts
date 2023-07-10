@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
+import dotenv from "dotenv"
 
+dotenv.config()
+
+const serverAdress: string|undefined = process.env.DB_SERVER_ADRESS
 
 async function connectDB() {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/estoque-circulo')
-        console.log('conectou')
+        await mongoose.connect(serverAdress ?? '')
+        console.log(`conectado em: ${serverAdress}`)
     } catch (err) {
         console.log(err)
     }
