@@ -63,6 +63,35 @@ const itemController = {
             res.status(500).json({ msg: 'Erro ao ler o item' })
         }
     },
+
+    updateOne: async (req: ItemRequest, res: Response) => {
+        try {
+
+            const item = {
+                brand: req.body.brand,
+                condition: req.body.condition,
+                type: req.body.type,
+                patrimony: req.body.patrimony,
+                all_keys: req.body.all_keys,
+                item_id: req.body.item_id,
+                desc: req.body.desc,
+            }
+
+            const item_id: String = req.params.item_id
+
+            const updatedItem = await Item.updateOne({ item_id: item_id }, item)
+
+            if (!updatedItem) return res.status(404).json({ msg: "Item não encontrado" })
+
+            res.status(200).json({ item, msg: "Item atualizado com sucesso" })
+
+
+        } catch (error: any) {
+            console.log(error)
+            res.status(500).json({ msg: 'Erro ao atualizar o item' })
+        }
+    }
 }
 
 export default itemController
+
