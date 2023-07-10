@@ -23,6 +23,10 @@ interface PassowordRequest extends Request {
     }
 }
 
+function isUserValid(user: UserRequest | null): user is UserRequest {
+    return user !== null && 'name' in user && 'user' in user && 'password' in user;
+}
+
 const userController = {
 
     create: async (req: UserRequest, res: Response) => {
@@ -45,31 +49,40 @@ const userController = {
             res.status(500).json({ msg: 'Erro ao criar usuário' })
         }
     },
-
     validate: async (req: PassowordRequest, res: Response) => {
         try {
+            const user = req.body.user;
+            const userFind = await User.findOne({ user: user });
 
-            const user = req.body.user
-            const userFind = await User.findOne({ user: user })
+            if (!userFind) {
+                return res.status(404).json({ msg: 'Usuário não encontrado' });
+            }
 
-            const correctPassword = userFind?.password
+            if (!userFind && !isUserValid(userFind)) {
+                return res.status(401).json({ msg: 'Credenciais inválidas' });
+            }
 
-            if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' })
+            const correctPassword = userFind.password;
 
-            const result = await bcrypt.compare(req.body.password, correctPassword?? '')
+            const result = await bcrypt.compare(req.body.password, correctPassword);
 
-            if (!result) return res.status(401).json({ msg: 'Credenciais inválidas' })
+            if (!result) {
+                return res.status(401).json({ msg: 'Credenciais inválidas' });
+            }
 
-            const token = jwt.sign({ id: userFind?.id }, jwtPass ?? '', { expiresIn: '8h' })
+            const token = jwt.sign({ id: userFind.id }, jwtPass ?? '', { expiresIn: '8h' });
 
-            console.log(token)
+            console.log(userFind)
 
+            const userFindObj = userFind.toObject();
+            const { password, ...userLogin } = userFindObj
+
+            return res.status(200).json({ user: userLogin, token: token });
 
         } catch (err: any) {
-            console.log(err)
+            console.log(err);
             res.status(500).json({ msg: 'Erro ao logar' })
         }
-
     },
 
     update: async (req: UserRequest, res: Response) => {
