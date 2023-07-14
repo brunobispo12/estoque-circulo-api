@@ -75,9 +75,9 @@ const userController = {
             console.log(userFind)
 
             const userFindObj = userFind.toObject();
-            const { password, ...userLogin } = userFindObj
+            const { password, createdAt, updatedAt, ...userLogin } = userFindObj
 
-            return res.status(200).json({ user: userLogin, token: token });
+            return res.status(200).json({ userLogged: userLogin, isAuth: true });
 
         } catch (err: any) {
             console.log(err);
