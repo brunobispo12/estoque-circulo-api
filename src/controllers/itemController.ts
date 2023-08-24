@@ -5,11 +5,16 @@ interface ItemRequest extends Request {
     body: {
         brand: String,
         condition: String,
+        name: String;
         type: String,
-        patrimony: Number,
-        all_keys: String,
-        item_id: Number,
-        desc: String,
+        available: String,
+        item_id: String,
+        desc?: String,
+        location?: {
+            sector?: String;
+            borrower?: String;
+            borrowDate?: String;
+        }
     }
 }
 
@@ -20,12 +25,17 @@ const itemController = {
             const item = {
                 brand: req.body.brand,
                 condition: req.body.condition,
+                name: req.body.name,
                 type: req.body.type,
-                patrimony: req.body.patrimony,
-                all_keys: req.body.all_keys,
+                available: req.body.available,
                 item_id: req.body.item_id,
                 desc: req.body.desc,
-            }
+                location: {
+                    sector: req.body.location?.sector,
+                    borrower: req.body.location?.borrower,
+                    borrowDate: req.body.location?.borrowDate,
+                },
+            };
 
             const response = await Item.create(item)
 
@@ -66,16 +76,20 @@ const itemController = {
 
     updateOne: async (req: ItemRequest, res: Response) => {
         try {
-
             const item = {
                 brand: req.body.brand,
                 condition: req.body.condition,
+                name: req.body.name,
                 type: req.body.type,
-                patrimony: req.body.patrimony,
-                all_keys: req.body.all_keys,
+                available: req.body.available,
                 item_id: req.body.item_id,
                 desc: req.body.desc,
-            }
+                location: {
+                    sector: req.body.location?.sector,
+                    borrower: req.body.location?.borrower,
+                    borrowDate: req.body.location?.borrowDate,
+                },
+            };
 
             const item_id: String = req.params.item_id
 

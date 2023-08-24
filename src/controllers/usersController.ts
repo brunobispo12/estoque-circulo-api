@@ -72,8 +72,6 @@ const userController = {
 
             const token = jwt.sign({ id: userFind.id }, jwtPass ?? '', { expiresIn: '8h' });
 
-            console.log(userFind)
-
             const userFindObj = userFind.toObject();
             const { password, createdAt, updatedAt, ...userLogin } = userFindObj
 
